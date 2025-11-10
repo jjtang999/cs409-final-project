@@ -1,38 +1,44 @@
 .App {
+  min-height: 100vh;
+}
+
+/* Utility Classes */
+.error-message {
+  background-color: #fee;
+  color: #c33;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 12px;
+  font-size: 0.9rem;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.section-description {
+  color: #6b7280;
+  margin: 0 0 20px 0;
+  font-size: 0.9rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Button Styles */
+button {
+  font-family: inherit;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.App-link {
-  color: #61dafb;
+/* Form Styles */
+input,
+select,
+textarea {
+  font-family: inherit;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+/* Responsive utilities */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
   }
 }
