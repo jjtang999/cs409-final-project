@@ -2,6 +2,27 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## API server (user/time-block storage)
+
+The front-end and Chrome extension talk to an Express API backed by MongoDB (Atlas or self-hosted).
+
+1. Install dependencies (`npm install` if you haven’t already).
+2. Copy `.env.example` to `.env` and set:
+   - `MONGODB_URI` – either a local connection string (`mongodb://127.0.0.1:27017/focusblock`) or an Atlas URI.
+   - `PORT` / `REACT_APP_API_URL` if you need something other than the defaults.
+3. Run `npm run server` to start the API on `http://localhost:4000`.
+
+> Tip: MongoDB Atlas has a generous free tier. Create a cluster, add a database user, and paste the provided connection string (with your credentials) into `MONGODB_URI`. The API uses SHA-256 hashes for demo purposes and should not be considered production-grade auth.
+
+## Chrome extension
+
+The `extension/` directory contains the FocusBlock Shield extension that blocks distracting websites whenever one of your scheduled blocks is active.
+
+1. Build/run the API server so the extension has data to query.
+2. Go to `chrome://extensions`, enable Developer Mode, and load the unpacked folder at `extension/`.
+3. Open the extension’s options page, confirm the API URL (point it at your hosted API if you deployed it), and sign in with the same credentials you use in the web UI.
+4. Keep the extension enabled in Chrome to enforce the schedules in the browser.
+
 ## Available Scripts
 
 In the project directory, you can run:

@@ -1,22 +1,18 @@
 import React from 'react';
-import { User, BlockedWebsite, TimeBlock, FocusSession } from '../types';
+import { User, BlockedWebsite, TimeBlock } from '../types';
 import BlockedWebsites from './BlockedWebsites';
 import TimeBlocks from './TimeBlocks';
-import FocusSessionComponent from './FocusSession';
 import './Dashboard.css';
 
 interface DashboardProps {
   user: User;
   blockedWebsites: BlockedWebsite[];
   timeBlocks: TimeBlock[];
-  activeFocusSession: FocusSession | null;
   onAddWebsite: (url: string, category?: string) => void;
   onRemoveWebsite: (id: string) => void;
   onAddTimeBlock: (timeBlock: Omit<TimeBlock, 'id'>) => void;
   onRemoveTimeBlock: (id: string) => void;
   onToggleTimeBlock: (id: string) => void;
-  onStartSession: (name: string, duration: number) => void;
-  onEndSession: () => void;
   onLogout: () => void;
 }
 
@@ -24,14 +20,11 @@ const Dashboard: React.FC<DashboardProps> = ({
   user,
   blockedWebsites,
   timeBlocks,
-  activeFocusSession,
   onAddWebsite,
   onRemoveWebsite,
   onAddTimeBlock,
   onRemoveTimeBlock,
   onToggleTimeBlock,
-  onStartSession,
-  onEndSession,
   onLogout,
 }) => {
   const getActiveTimeBlocks = () => {
@@ -50,7 +43,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   };
 
   const activeTimeBlocks = getActiveTimeBlocks();
-  const hasActiveBlocks = activeFocusSession || activeTimeBlocks.length > 0;
+  const hasActiveBlocks = activeTimeBlocks.length > 0;
 
   return (
     <div className="dashboard">
@@ -74,11 +67,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               <div className="status-icon">🛡️</div>
               <div>
                 <h3>Protection Active</h3>
-                <p>
-                  {activeFocusSession
-                    ? `Focus session: ${activeFocusSession.name}`
-                    : `${activeTimeBlocks.length} scheduled block(s) active`}
-                </p>
+                <p>{`${activeTimeBlocks.length} scheduled block(s) active`}</p>
               </div>
             </div>
           ) : (
@@ -86,7 +75,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               <div className="status-icon">😴</div>
               <div>
                 <h3>No Active Blocks</h3>
-                <p>Start a focus session or wait for your scheduled blocks</p>
+                <p>Wait for your scheduled blocks to begin</p>
               </div>
             </div>
           )}
@@ -109,13 +98,6 @@ const Dashboard: React.FC<DashboardProps> = ({
             <div className="stat-label">Active Schedules</div>
           </div>
         </div>
-
-        {/* Focus Session */}
-        <FocusSessionComponent
-          activeFocusSession={activeFocusSession}
-          onStartSession={onStartSession}
-          onEndSession={onEndSession}
-        />
 
         {/* Blocked Websites */}
         <BlockedWebsites

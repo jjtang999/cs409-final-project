@@ -20,18 +20,8 @@ export interface TimeBlock {
   isActive: boolean;
 }
 
-export interface FocusSession {
-  id: string;
-  name: string;
-  duration: number; // in minutes
-  startedAt: Date;
-  endAt: Date;
-  isActive: boolean;
-}
-
 export interface AppState {
   user: User | null;
   blockedWebsites: BlockedWebsite[];
   timeBlocks: TimeBlock[];
-  activeFocusSession: FocusSession | null;
 }

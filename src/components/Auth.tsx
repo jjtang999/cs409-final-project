@@ -2,19 +2,22 @@ import React, { useState } from 'react';
 import './Auth.css';
 
 interface AuthProps {
-  onLogin: (email: string, password: string) => void;
-  onRegister: (email: string, username: string, password: string) => void;
+  onLogin: (email: string, password: string) => Promise<void>;
+  onRegister: (email: string, username: string, password: string) => Promise<void>;
+  isLoading?: boolean;
+  serverError?: string | null;
 }
 
-const Auth: React.FC<AuthProps> = ({ onLogin, onRegister }) => {
+const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, isLoading = false, serverError }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -36,9 +39,27 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onRegister }) => {
         setError('Password must be at least 6 characters');
         return;
       }
-      onRegister(email, username, password);
+      try {
+        setIsSubmitting(true);
+        await onRegister(email, username, password);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Unable to register';
+        setError(message);
+        return;
+      } finally {
+        setIsSubmitting(false);
+      }
     } else {
-      onLogin(email, password);
+      try {
+        setIsSubmitting(true);
+        await onLogin(email, password);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Unable to log in';
+        setError(message);
+        return;
+      } finally {
+        setIsSubmitting(false);
+      }
     }
 
     // Clear form
@@ -66,7 +87,9 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onRegister }) => {
         <form onSubmit={handleSubmit} className="auth-form">
           <h2>{isLogin ? 'Sign In' : 'Create Account'}</h2>
           
-          {error && <div className="auth-error">{error}</div>}
+          {(error || serverError) && (
+            <div className="auth-error">{error || serverError}</div>
+          )}
           
           <div className="form-group">
             <label htmlFor="email">Email</label>
@@ -120,8 +143,12 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onRegister }) => {
             </div>
           )}
 
-          <button type="submit" className="auth-button">
-            {isLogin ? 'Sign In' : 'Sign Up'}
+          <button type="submit" className="auth-button" disabled={isSubmitting || isLoading}>
+            {isSubmitting || isLoading
+              ? 'Please wait...'
+              : isLogin
+              ? 'Sign In'
+              : 'Sign Up'}
           </button>
         </form>
 
