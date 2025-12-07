@@ -84,7 +84,8 @@ function App() {
     setIsAuthLoading(true);
     setServerError(null);
     try {
-      const payload = await api.login(email, password);
+      const timezoneOffset = new Date().getTimezoneOffset();
+      const payload = await api.login(email, password, timezoneOffset);
       updateStateFromPayload(payload);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to log in';
@@ -99,7 +100,8 @@ function App() {
     setIsAuthLoading(true);
     setServerError(null);
     try {
-      const payload = await api.register(email, username, password);
+      const timezoneOffset = new Date().getTimezoneOffset();
+      const payload = await api.register(email, username, password, timezoneOffset);
       updateStateFromPayload(payload);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to register';

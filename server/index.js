@@ -40,6 +40,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     username: { type: String, required: true },
     passwordHash: { type: String, required: true },
+    timezoneOffset: { type: Number, default: 0 },
     blockedWebsites: [blockedWebsiteSchema],
     timeBlocks: [timeBlockSchema],
   },
@@ -55,6 +56,7 @@ const sanitizeUser = (userDoc) => ({
   id: userDoc._id.toString(),
   email: userDoc.email,
   username: userDoc.username,
+  timezoneOffset: userDoc.timezoneOffset || 0,
 });
 
 const serializeWebsite = (siteDoc) => ({
@@ -89,13 +91,13 @@ const isUrlMatch = (blockedUrl, urlToTest) => {
   }
 };
 
-const isBlockActive = (block, date = new Date()) => {
+const isBlockActive = (block, date = new Date(), timezoneOffset = 0) => {
   if (!block.isActive) {
     return false;
   }
 
-  const now = date;
-  if (!block.daysOfWeek.includes(now.getDay())) {
+  const localDate = new Date(date.getTime() - timezoneOffset * 60000);
+  if (!block.daysOfWeek.includes(localDate.getDay())) {
     return false;
   }
 
@@ -104,7 +106,7 @@ const isBlockActive = (block, date = new Date()) => {
 
   const startMinutes = startH * 60 + startM;
   const endMinutes = endH * 60 + endM;
-  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const nowMinutes = localDate.getHours() * 60 + localDate.getMinutes();
 
   if (endMinutes < startMinutes) {
     return nowMinutes >= startMinutes || nowMinutes < endMinutes;
@@ -115,7 +117,7 @@ const isBlockActive = (block, date = new Date()) => {
 
 app.post('/api/auth/register', async (req, res) => {
   try {
-    const { email, username, password } = req.body;
+    const { email, username, password, timezoneOffset } = req.body;
     if (!email || !username || !password) {
       return res.status(400).json({ message: 'Email, username and password are required.' });
     }
@@ -129,6 +131,7 @@ app.post('/api/auth/register', async (req, res) => {
       email,
       username,
       passwordHash: hashPassword(password),
+      timezoneOffset: typeof timezoneOffset === 'number' ? timezoneOffset : 0,
       blockedWebsites: [],
       timeBlocks: [],
     });
@@ -142,7 +145,7 @@ app.post('/api/auth/register', async (req, res) => {
 
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, timezoneOffset } = req.body;
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required.' });
     }
@@ -150,6 +153,11 @@ app.post('/api/auth/login', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user || user.passwordHash !== hashPassword(password)) {
       return res.status(401).json({ message: 'Invalid credentials.' });
+    }
+
+    if (typeof timezoneOffset === 'number' && user.timezoneOffset !== timezoneOffset) {
+      user.timezoneOffset = timezoneOffset;
+      await user.save();
     }
 
     res.json(buildUserPayload(user));
@@ -302,7 +310,9 @@ app.get('/api/block-check', async (req, res) => {
     }
 
     const now = new Date();
-    const activeBlock = timeBlocks.find((block) => isBlockActive(block, now));
+    const activeBlock = timeBlocks.find((block) =>
+      isBlockActive(block, now, user.timezoneOffset || 0)
+    );
     if (!activeBlock) {
       return res.json({ blocked: false });
     }

@@ -1,9 +1,6 @@
 import { BlockedWebsite, TimeBlock, User } from './types';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000';
-console.log(process.env.REACT_APP_API_URL);
-console.log(process.env.RANDOM_VALUE_THAT_DOES_NOT_EXIST);
-console.log(API_URL);
 interface AuthPayload {
   user: User;
   blockedWebsites: BlockedWebsite[];
@@ -48,10 +45,10 @@ const patch = <T>(path: string, body: Record<string, unknown>) =>
 const del = (path: string) => request<void>(path, { method: 'DELETE' });
 
 export const api = {
-  register: (email: string, username: string, password: string) =>
-    post<AuthPayload>('/api/auth/register', { email, username, password }),
-  login: (email: string, password: string) =>
-    post<AuthPayload>('/api/auth/login', { email, password }),
+  register: (email: string, username: string, password: string, timezoneOffset: number) =>
+    post<AuthPayload>('/api/auth/register', { email, username, password, timezoneOffset }),
+  login: (email: string, password: string, timezoneOffset: number) =>
+    post<AuthPayload>('/api/auth/login', { email, password, timezoneOffset }),
   fetchUserData: (userId: string) => request<AuthPayload>(`/api/users/${userId}`),
   addBlockedSite: (userId: string, url: string, category?: string) =>
     post<BlockedWebsite>(`/api/users/${userId}/blocked-sites`, { url, category }),
