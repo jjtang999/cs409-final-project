@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focus Guard</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="header">
+      <h1>🛡️ Focus Guard</h1>
+    </header>
+
+    <!-- Login View -->
+    <div id="loginView" class="view">
+      <p class="login-message">Sign in to sync your blocked websites and focus sessions.</p>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <input type="email" id="email" placeholder="Email" required>
+        </div>
+        <div class="form-group">
+          <input type="password" id="password" placeholder="Password" required>
+        </div>
+        <div id="loginError" class="error-message" style="display: none;"></div>
+        <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+      </form>
+      
+      <p class="signup-link">
+        Don't have an account? <a href="http://localhost:3000" target="_blank">Sign up</a>
+      </p>
+    </div>
+
+    <!-- Main View -->
+    <div id="mainView" class="view" style="display: none;">
+      <div class="user-info">
+        <span id="userName">User</span>
+        <button id="logoutBtn" class="btn btn-text">Logout</button>
+      </div>
+
+      <!-- Status Card -->
+      <div class="status-card" id="statusCard">
+        <div class="status-indicator" id="statusIndicator">
+          <span class="status-dot"></span>
+          <span class="status-text" id="statusText">Checking...</span>
+        </div>
+        <p class="status-detail" id="statusDetail"></p>
+      </div>
+
+      <!-- Active Session -->
+      <div id="activeSessionCard" class="session-card" style="display: none;">
+        <h3>Active Focus Session</h3>
+        <p id="sessionName">Focus Session</p>
+        <div class="timer" id="sessionTimer">--:--</div>
+        <button id="endSessionBtn" class="btn btn-danger btn-small">End Session</button>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <h3>Quick Focus</h3>
+        <div class="action-buttons">
+          <button class="btn btn-secondary" data-duration="25">25 min</button>
+          <button class="btn btn-secondary" data-duration="45">45 min</button>
+          <button class="btn btn-secondary" data-duration="60">60 min</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-section">
+        <div class="stat">
+          <span class="stat-value" id="blockedCount">0</span>
+          <span class="stat-label">Sites Blocked</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="sessionStatus">-</span>
+          <span class="stat-label">Session</span>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <a href="http://localhost:3000" target="_blank" class="btn btn-link">Open Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Blocked - Focus Guard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .container {
+      text-align: center;
+      padding: 40px;
+      max-width: 500px;
+    }
+
+    .icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .blocked-url {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      word-break: break-all;
+      font-family: monospace;
+    }
+
+    .message {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .session-info {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    .timer {
+      font-size: 2em;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-size: 1em;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      margin: 5px;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .btn-primary {
+      background: white;
+      color: #667eea;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid white;
+    }
+
+    .encouragement {
+      margin-top: 40px;
+      font-style: italic;
+      opacity: 0.9;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 0.9em;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🛡️</div>
+    <h1>Stay Focused!</h1>
+    
+    <div class="blocked-url" id="blockedUrl"></div>
+    
+    <p class="message">
+      This website is blocked during your focus time. 
+      You've got this! Stay on track with your goals.
+    </p>
+
+    <div class="session-info" id="sessionInfo" style="display: none;">
+      <p>Focus session ends in:</p>
+      <div class="timer" id="timer">--:--</div>
+    </div>
+
+    <div class="actions">
+      <a href="http://localhost:3000" class="btn btn-primary">Open Dashboard</a>
+      <button class="btn btn-secondary" onclick="goBack()">Go Back</button>
+    </div>
+
+    <p class="encouragement" id="encouragement"></p>
+
+    <p class="footer">Protected by Focus Guard 🎯</p>
+  </div>
+
+  <script>
+    const encouragements = [
+      "Small steps lead to big achievements. Keep going!",
+      "Your future self will thank you for staying focused.",
+      "Distractions are temporary, but your goals are forever.",
+      "Every minute of focus brings you closer to success.",
+      "You're stronger than any distraction!",
+      "Channel your energy into what truly matters.",
+      "Focus is a superpower. Use it wisely!",
+      "The best time to focus is now."
+    ];
+
+    // Get blocked URL from query params
+    const urlParams = new URLSearchParams(window.location.search);
+    const blockedUrl = urlParams.get('url') || 'Unknown site';
+    
+    try {
+      const url = new URL(blockedUrl);
+      document.getElementById('blockedUrl').textContent = url.hostname;
+    } catch {
+      document.getElementById('blockedUrl').textContent = blockedUrl;
+    }
+
+    // Show random encouragement
+    const randomIndex = Math.floor(Math.random() * encouragements.length);
+    document.getElementById('encouragement').textContent = `"${encouragements[randomIndex]}"`;
+
+    // Get session info and show timer if available
+    chrome.storage.local.get('blockingState', ({ blockingState }) => {
+      if (blockingState && blockingState.activeFocusSession) {
+        const session = blockingState.activeFocusSession;
+        const endAt = new Date(session.endAt);
+        
+        document.getElementById('sessionInfo').style.display = 'block';
+        
+        function updateTimer() {
+          const now = new Date();
+          const diff = endAt - now;
+          
+          if (diff <= 0) {
+            document.getElementById('timer').textContent = 'Session ended!';
+            return;
+          }
+          
+          const minutes = Math.floor(diff / 60000);
+          const seconds = Math.floor((diff % 60000) / 1000);
+          document.getElementById('timer').textContent = 
+            `${minutes}:${seconds.toString().padStart(2, '0')}`;
+          
+          setTimeout(updateTimer, 1000);
+        }
+        
+        updateTimer();
+      }
+    });
+
+    function goBack() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.close();
+      }
+    }
+  </script>
+</body>
+</html>
