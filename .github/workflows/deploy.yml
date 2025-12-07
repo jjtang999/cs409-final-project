@@ -36,7 +36,7 @@ jobs:
 
       - name: Build site
         env:
-          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          REACT_APP_API_URL: https://cs409-final-project-4f8p.onrender.com
         run: |
           echo "API URL during build: $REACT_APP_API_URL"
           npm run build
