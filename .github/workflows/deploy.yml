@@ -35,8 +35,12 @@ jobs:
         run: npm ci
 
       - name: Build site
-        run: npx cross-env REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} npm run build
-
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+        run: |
+          echo "API URL during build: $REACT_APP_API_URL"
+          npm run build
+          
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
