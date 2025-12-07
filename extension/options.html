@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>FocusBlock Shield Settings</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="options-shell">
+      <section class="panel">
+        <h1>FocusBlock Shield</h1>
+        <p class="subtitle">Connect the extension to your FocusBlock API and sign in with your account.</p>
+        <form id="api-form" class="form-grid">
+          <label for="apiUrl">API URL</label>
+          <input type="text" id="apiUrl" placeholder="http://localhost:4000" />
+          <button type="submit">Save API URL</button>
+          <p id="api-status" class="status"></p>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>Account</h2>
+        <div id="connected-user" class="connected" hidden>
+          <p class="status success">Connected as <span id="connected-username"></span></p>
+          <button id="logout-button" class="secondary">Disconnect</button>
+        </div>
+        <form id="login-form" class="form-grid">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="you@example.com" required />
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter password" required />
+          <button type="submit">Sign In</button>
+          <p id="login-status" class="status"></p>
+        </form>
+      </section>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>
