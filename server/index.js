@@ -211,11 +211,8 @@ app.delete('/api/users/:userId/blocked-sites/:siteId', async (req, res) => {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    const site = user.blockedWebsites.id(req.params.siteId);
-    if (site) {
-      site.remove();
-      await user.save();
-    }
+    user.blockedWebsites.pull(req.params.siteId);
+    await user.save();
 
     res.status(204).end();
   } catch (error) {
@@ -276,11 +273,8 @@ app.delete('/api/users/:userId/time-blocks/:blockId', async (req, res) => {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    const block = user.timeBlocks.id(req.params.blockId);
-    if (block) {
-      block.remove();
-      await user.save();
-    }
+    user.timeBlocks.pull(req.params.blockId);
+    await user.save();
 
     res.status(204).end();
   } catch (error) {
