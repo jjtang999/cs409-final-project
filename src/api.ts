@@ -1,7 +1,8 @@
 import { BlockedWebsite, TimeBlock, User } from './types';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000';
-
+console.log(process.env.REACT_APP_API_URL);
+console.log(API_URL);
 interface AuthPayload {
   user: User;
   blockedWebsites: BlockedWebsite[];
