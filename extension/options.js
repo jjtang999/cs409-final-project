@@ -62,10 +62,11 @@ loginForm?.addEventListener('submit', async (event) => {
   loginStatus.textContent = 'Signing in...';
 
   try {
+    const timezoneOffset = new Date().getTimezoneOffset();
     const response = await fetch(`${apiUrl}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, timezoneOffset }),
     });
 
     if (!response.ok) {
